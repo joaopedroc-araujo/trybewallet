@@ -1,6 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom/cjs/react-router-dom.min';
-import Header from './components/Header';
+import { Route, Switch } from 'react-router-dom';
 import Login from './pages/Login';
 import Wallet from './pages/Wallet';
 
@@ -13,12 +12,7 @@ function App() {
         <Route
           path="/carteira"
           exact
-          render={ () => (
-            <>
-              <Header />
-              <Wallet />
-            </>
-          ) }
+          component={ Wallet }
         />
       </Switch>
     </div>
