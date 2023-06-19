@@ -9,6 +9,8 @@ export const ADD_EXPENSE = 'ADD_EXPENSE';
 export const FETCH_EXCHANGE_RATES = 'FETCH_EXCHANGE_RATES';
 export const SET_EXCHANGE_RATES = 'SET_EXCHANGE_RATES';
 export const SET_ASK_RATES = 'SET_ASK_RATES';
+export const GET_EXCHANGE_RATE = 'GET_EXCHANGE_RATE';
+export const UPDATE_GLOBAL_STATE = 'UPDATE_GLOBAL_STATE';
 
 export const addEmail = (email) => ({
   type: ADD_EMAIL,
@@ -49,13 +51,35 @@ export function fetchChangeRates() {
 
     const exchangeRates = Object.entries(data)
       .reduce((rates, [currency, currencyData]) => {
-        if (currency !== 'USDT') {
-          rates[currency] = currencyData;
-        }
+        rates[currency] = currencyData;
         return rates;
       }, {});
+    // console.log(exchangeRates);
     dispatch({ type: SET_EXCHANGE_RATES, exchangeRates });
     // console.log(exchangeRates);
     return exchangeRates;
   };
 }
+
+// export const updateExchangeRates = () => async (dispatch, getState) => {
+//   dispatch(requestStarted());
+
+//   const response = await fetch('https://economia.awesomeapi.com.br/json/all');
+//   const data = await response.json();
+
+//   const newExchangeRates = Object.entries(data)
+//     .reduce((rates, [currency, currencyData]) => {
+//       rates[currency] = currencyData;
+//       return rates;
+//     }, {});
+
+//   const { expenses } = getState().wallet;
+//   const updatedState = {
+//     ...getState().wallet,
+//     expenses: [...expenses],
+//     exchangeRates: newExchangeRates,
+//   };
+
+//   dispatch({ type: SET_EXCHANGE_RATES, exchangeRates: newExchangeRates });
+//   dispatch({ type: UPDATE_GLOBAL_STATE, payload: updatedState });
+// };

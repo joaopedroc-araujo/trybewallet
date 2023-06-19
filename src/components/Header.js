@@ -1,20 +1,32 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { fetchChangeRates } from '../redux/actions';
+// import { fetchChangeRates } from '../redux/actions';
+// import { fetchCurrenciesAndRates } from '../redux/actions';
 
 class Header extends Component {
-  async componentDidMount() {
-    const { dispatch } = this.props;
-    await dispatch(fetchChangeRates());
-  }
+  handleRate = () => {
+    const { expenses, exchangeRates } = this.props;
+    // console.log(exchangeRates);
+    const total = expenses.reduce((acc, curr) => {
+      const { currency, value } = curr;
+      const rate = exchangeRates[currency] ? exchangeRates[currency].ask : 0;
+      const totalValue = parseFloat(Number(value) * Number(rate)).toFixed(2);
+      return +acc + +totalValue;
+    }, 0);
+    // console.log(total);
+    return total;
+  };
 
   render() {
     const { email } = this.props;
+    const totalValue = this.handleRate();
+    // const {exchangeRates} = this.props;
+    // console.log(totalValue);
     return (
       <div>
         <h3 data-testid="email-field">{email}</h3>
-        <p data-testid="total-field">0</p>
+        <p data-testid="total-field">{totalValue}</p>
         <p data-testid="header-currency-field">BRL</p>
       </div>
     );
@@ -23,14 +35,21 @@ class Header extends Component {
 
 const mapStateToProps = (state) => ({
   email: state.user.email,
-  currencies: state.wallet.currencies,
   expenses: state.wallet.expenses,
-  // currentRate: state.wallet.exchangeRates.currentRate,
+  exchangeRates: state.wallet.exchangeRates[0],
 });
 
 Header.propTypes = {
-  dispatch: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
+  expenses: PropTypes.arrayOf(
+    PropTypes.shape({
+      currency: PropTypes.string.isRequired,
+      value: PropTypes.number.isRequired,
+    }),
+  ).isRequired,
+  exchangeRates: PropTypes.shape({
+    ask: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default connect(mapStateToProps)(Header);

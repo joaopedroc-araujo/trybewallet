@@ -1,13 +1,10 @@
 import initialState from './initialState';
 import { ADD_EXPENSE } from '../actions';
 
-const expensesReducer = (state = initialState.wallet, action) => {
+const expensesReducer = (state = initialState.wallet.expenses, action) => {
   switch (action.type) {
   case ADD_EXPENSE:
-    return {
-      ...state,
-      expenses: [...state.expenses, action.payload],
-    };
+    return [...state, action.payload];
 
   default:
     return state;
