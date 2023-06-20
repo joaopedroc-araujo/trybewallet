@@ -52,7 +52,14 @@ export function fetchChangeRates() {
   };
 }
 
-export const deleteExpense = (expenseId) => ({
+export const deleteExpense = (filteredExpenses) => ({
   type: DELETE_EXPENSE,
-  payload: expenseId,
+  payload: filteredExpenses,
 });
+
+export const deleteExpenseById = (expenseId) => (dispatch, getState) => {
+  const { expenses } = getState().wallet;
+  console.log(expenses);
+  const deletedExpenses = expenses.filter((expense) => expense.id !== expenseId);
+  dispatch(deleteExpense(deletedExpenses));
+};
