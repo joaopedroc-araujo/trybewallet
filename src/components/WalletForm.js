@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 // import * as actions from '../redux/actions';
-import { addExpense, fetchCurrencies, fetchChangeRates } from '../redux/actions';
+import { addExpense, fetchChangeRates } from '../redux/actions';
 // import saveRate from '../redux/reducers/saveRate';
 
 const alimentação = 'Alimentação';
@@ -20,7 +20,6 @@ class WalletForm extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch(fetchCurrencies());
     dispatch(fetchChangeRates()).then((rates) => {
       this.setExchangeRates(rates);
     });
@@ -78,7 +77,7 @@ class WalletForm extends Component {
     };
 
     dispatch(addExpense(newExpense));
-
+    dispatch(fetchChangeRates());
     this.setState((prevState) => ({
       id: prevState.id + 1,
       value: '',

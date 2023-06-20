@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+// import { deleteExpense } from '../redux/actions';
 
 class Table extends Component {
   handleTableRows = () => {
     const { expenses } = this.props;
-    return expenses.map((expense) => {
+    const filteredExpenses = expenses.filter((expense) => !expense.deleted);
+    return filteredExpenses.map((expense) => {
       const { id, description, tag, method, value, currency, exchangeRates } = expense;
       const { name, ask } = exchangeRates
       && exchangeRates[currency] ? exchangeRates[currency] : {};
       const formattedValue = parseFloat(value).toFixed(2);
       const convertedValue = (Number(formattedValue) * parseFloat(ask)).toFixed(2);
-      console.log(formattedValue);
-      console.log(convertedValue);
+      // console.log(formattedValue);
+      // console.log(convertedValue);
       return (
         <tr key={ id }>
           <td>{description}</td>
@@ -25,15 +27,28 @@ class Table extends Component {
           <td>Real</td>
           <td>
             <button type="button">Editar</button>
-            <button type="button" data-testid="delete-btn">Excluir</button>
+            <button
+              type="button"
+              data-testid="delete-btn"
+              onClick={ () => this.handleDeleteButtonClick(id) }
+            >
+              Excluir
+            </button>
           </td>
         </tr>
       );
     });
   };
 
+  // handleDeleteButtonClick = (id) => {
+  //   const { deleteExpense } = this.props;
+  //   deleteExpense(id);
+  // };
+
   render() {
     const { expenses } = this.props;
+    const filteredExpenses = expenses.filter((expense) => !expense.deleted);
+
     return (
       <table>
         <thead>
@@ -50,7 +65,7 @@ class Table extends Component {
           </tr>
         </thead>
         <tbody>
-          {expenses && expenses.length > 0 ? (
+          {filteredExpenses ? (
             this.handleTableRows())
             : (<td>Nenhuma despesa encontrada.</td>)}
         </tbody>
@@ -78,5 +93,9 @@ const mapStateToProps = (state) => ({
   expenses: state.wallet.expenses,
   exchangeRates: state.wallet.exchangeRates,
 });
+
+// const mapDispatchToProps = (dispatch) => ({
+//   deleteExpense: (id) => dispatch(deleteExpense(id)),
+// });
 
 export default connect(mapStateToProps)(Table);

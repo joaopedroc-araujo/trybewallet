@@ -14,7 +14,7 @@ class Header extends Component {
       return acc + totalValue;
     }, 0).toFixed(2);
 
-    console.log(total);
+    // console.log(total);
     return total;
   };
 

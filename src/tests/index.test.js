@@ -6,12 +6,13 @@ import { Provider } from 'react-redux';
 import { legacy_createStore as createStore } from 'redux';
 // import thunk from 'redux-thunk';
 import userEvent from '@testing-library/user-event';
-import rootReducer from '../../redux/reducers';
-import { fetchCurrencies, CHANGE_CURRENCY, REQUEST_STARTED } from '../../redux/actions';
-import App from '../../App';
+import rootReducer from '../redux/reducers';
+import { SET_EXCHANGE_RATES, fetchChangeRates } from '../redux/actions';
+import App from '../App';
 // import Wallet from '../../pages/Wallet';
-import Login from '../../pages/Login';
-import { renderWithRouter, renderWithRouterAndRedux } from './renderWith';
+import Login from '../pages/Login';
+import { renderWithRouter, renderWithRouterAndRedux } from './helpers/renderWith';
+import mockData from './helpers/mockData';
 
 const emailTestId = 'email-input';
 const emailTest = 'teste@teste.com';
@@ -82,39 +83,16 @@ describe('testa a página de login', () => {
 });
 
 describe('Testa as actions e reducers', () => {
-  test('Testa a action fetchCurrencies', async () => {
-    const mockData = {
-      USD: {},
-      CAD: {},
-      GBP: {},
-    };
-
-    global.fetch = jest.fn().mockResolvedValue({
-      json: jest.fn().mockResolvedValue(mockData),
-    });
-
-    const expectedCurrencies = [
-      'USD',
-      'CAD',
-      'GBP',
-    ];
-
-    const actions = [
-      { type: REQUEST_STARTED },
-      { type: CHANGE_CURRENCY, payload: expectedCurrencies },
-    ];
-
+  test('Testa a ação SET_EXCHANGE_RATES', async () => {
+    global.fetch = jest.fn().mockImplementation(() => Promise.resolve({
+      json: () => Promise.resolve(mockData),
+    }));
     const mockDispatch = jest.fn();
-    const mockStore = {
-      getState: jest.fn(),
-      dispatch: mockDispatch,
-    };
-
-    await fetchCurrencies()(mockStore.dispatch);
-
-    expect(mockDispatch.mock.calls.length).toBe(actions.length);
-    actions.forEach((action, index) => {
-      expect(mockDispatch.mock.calls[index][0]).toEqual(action);
+    await fetchChangeRates()(mockDispatch);
+    // expect('SET_EXCHANGE_RATES').toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: SET_EXCHANGE_RATES,
+      exchangeRates: mockData,
     });
   });
 });

@@ -11,6 +11,7 @@ export const SET_EXCHANGE_RATES = 'SET_EXCHANGE_RATES';
 export const SET_ASK_RATES = 'SET_ASK_RATES';
 export const GET_EXCHANGE_RATE = 'GET_EXCHANGE_RATE';
 export const UPDATE_GLOBAL_STATE = 'UPDATE_GLOBAL_STATE';
+export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 
 export const addEmail = (email) => ({
   type: ADD_EMAIL,
@@ -26,19 +27,6 @@ export const changeCurrency = (currency) => ({
   payload: currency,
 });
 
-export function fetchCurrencies() {
-  return async (dispatch) => {
-    dispatch(requestStarted());
-    const response = await fetch('https://economia.awesomeapi.com.br/json/all');
-    const data = await response.json();
-    const currencies = Object.keys(data)
-      .filter((currency) => currency !== 'USDT')
-      .map((currency) => currency);
-    dispatch(changeCurrency(currencies));
-    // console.log(currencies);
-  };
-}
-
 export const addExpense = (expenses) => ({
   type: ADD_EXPENSE,
   payload: expenses,
@@ -48,7 +36,10 @@ export function fetchChangeRates() {
   return async (dispatch) => {
     const response = await fetch('https://economia.awesomeapi.com.br/json/all');
     const data = await response.json();
-
+    const currencies = Object.keys(data)
+      .filter((currency) => currency !== 'USDT')
+      .map((currency) => currency);
+    dispatch(changeCurrency(currencies));
     const exchangeRates = Object.entries(data)
       .reduce((rates, [currency, currencyData]) => {
         rates[currency] = currencyData;
@@ -61,25 +52,7 @@ export function fetchChangeRates() {
   };
 }
 
-// export const updateExchangeRates = () => async (dispatch, getState) => {
-//   dispatch(requestStarted());
-
-//   const response = await fetch('https://economia.awesomeapi.com.br/json/all');
-//   const data = await response.json();
-
-//   const newExchangeRates = Object.entries(data)
-//     .reduce((rates, [currency, currencyData]) => {
-//       rates[currency] = currencyData;
-//       return rates;
-//     }, {});
-
-//   const { expenses } = getState().wallet;
-//   const updatedState = {
-//     ...getState().wallet,
-//     expenses: [...expenses],
-//     exchangeRates: newExchangeRates,
-//   };
-
-//   dispatch({ type: SET_EXCHANGE_RATES, exchangeRates: newExchangeRates });
-//   dispatch({ type: UPDATE_GLOBAL_STATE, payload: updatedState });
-// };
+export const deleteExpense = (expenseId) => ({
+  type: DELETE_EXPENSE,
+  payload: expenseId,
+});
