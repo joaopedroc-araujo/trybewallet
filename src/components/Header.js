@@ -7,14 +7,14 @@ import PropTypes from 'prop-types';
 class Header extends Component {
   handleRate = () => {
     const { expenses, exchangeRates } = this.props;
-    // console.log(exchangeRates);
     const total = expenses.reduce((acc, curr) => {
       const { currency, value } = curr;
       const rate = exchangeRates[currency] ? exchangeRates[currency].ask : 0;
-      const totalValue = parseFloat(Number(value) * Number(rate)).toFixed(2);
-      return +acc + +totalValue;
-    }, 0);
-    // console.log(total);
+      const totalValue = Number(value) * Number(rate);
+      return acc + totalValue;
+    }, 0).toFixed(2);
+
+    console.log(total);
     return total;
   };
 
