@@ -1,5 +1,5 @@
 import initialState from './initialState';
-import { ADD_EXPENSE, DELETE_EXPENSE } from '../actions';
+import { ADD_EXPENSE, DELETE_EXPENSE, EDIT_EXPENSE } from '../actions';
 
 const expensesReducer = (state = initialState.wallet.expenses, action) => {
   switch (action.type) {
@@ -9,6 +9,11 @@ const expensesReducer = (state = initialState.wallet.expenses, action) => {
   case DELETE_EXPENSE:
     return action.payload;
 
+  case EDIT_EXPENSE:
+    return {
+      ...state,
+      expenses: action.expenses,
+    };
   default:
     return state;
   }

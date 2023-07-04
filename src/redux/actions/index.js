@@ -12,6 +12,7 @@ export const SET_ASK_RATES = 'SET_ASK_RATES';
 export const GET_EXCHANGE_RATE = 'GET_EXCHANGE_RATE';
 export const UPDATE_GLOBAL_STATE = 'UPDATE_GLOBAL_STATE';
 export const DELETE_EXPENSE = 'DELETE_EXPENSE';
+export const EDIT_EXPENSE = 'EDIT_EXPENSE';
 
 export const addEmail = (email) => ({
   type: ADD_EMAIL,
@@ -59,7 +60,12 @@ export const deleteExpense = (filteredExpenses) => ({
 
 export const deleteExpenseById = (expenseId) => (dispatch, getState) => {
   const { expenses } = getState().wallet;
-  console.log(expenses);
+  // console.log(expenses);
   const deletedExpenses = expenses.filter((expense) => expense.id !== expenseId);
   dispatch(deleteExpense(deletedExpenses));
 };
+
+export const editExpenseById = (expenses) => ({
+  type: EDIT_EXPENSE,
+  expenses,
+});

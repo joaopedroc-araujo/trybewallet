@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { deleteExpenseById as removeExpense } from '../redux/actions/index';
+import { deleteExpenseById as removeExpense, editExpenseById } from '../redux/actions/index';
 
 class Table extends Component {
   handleTableRows = () => {
@@ -13,8 +13,6 @@ class Table extends Component {
       && exchangeRates[currency] ? exchangeRates[currency] : {};
       const formattedValue = parseFloat(value).toFixed(2);
       const convertedValue = (Number(formattedValue) * parseFloat(ask)).toFixed(2);
-      // console.log(formattedValue);
-      // console.log(convertedValue);
       return (
         <tr key={ id }>
           <td>{description}</td>
@@ -26,7 +24,12 @@ class Table extends Component {
           <td>{convertedValue}</td>
           <td>Real</td>
           <td>
-            <button type="button">Editar</button>
+            <button
+              type="button"
+              data-testid="edit-btn"
+            >
+              Editar
+            </button>
             <button
               type="button"
               data-testid="delete-btn"
@@ -43,6 +46,48 @@ class Table extends Component {
   handleDeleteButtonClick = (id) => {
     const { deleteExpenseById } = this.props;
     deleteExpenseById(id);
+  };
+
+  handleEditButtonClick = (id) => {
+    const { expenses, dispatch } = this.props;
+    const editedExpense = expenses.find((expense) => expense.id === id);
+
+    if (editedExpense) {
+      this.setState({
+        id: editedExpense.id,
+        value: editedExpense.value,
+        description: editedExpense.description,
+        currencySelected: editedExpense.currency,
+        method: editedExpense.method,
+        tag: editedExpense.tag,
+      });
+    }
+
+    const {
+      value,
+      description,
+      currencySelected,
+      method,
+      tag,
+      // id,
+    } = this.state;
+
+    const mappedEditedExpense = expenses.map((expense) => {
+      if (expense.id === id) {
+        return {
+          ...expense,
+          id,
+          value,
+          description,
+          currency: currencySelected,
+          method,
+          tag,
+        };
+      }
+      return expense;
+    });
+    dispatch(editedExpense(mappedEditedExpense));
+    // this.setState({ isEditMode: true });
   };
 
   render() {
@@ -95,6 +140,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   deleteExpenseById: (id) => dispatch(removeExpense(id)),
+  editExpenseById: (expenses) => dispatch(editExpenseById(expenses)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
